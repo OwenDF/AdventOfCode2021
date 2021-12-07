@@ -9,7 +9,8 @@ for (var i = 0; i <= max; i++)
     var fuelUsed = 0;
     foreach (var submarine in submarines)
     {
-        fuelUsed += Math.Abs(submarine - i);
+        var steps = Math.Abs(submarine - i);
+        for (var j = 1; j <= steps; j++) fuelUsed += j;
     }
 
     minFuel = Math.Min(minFuel, fuelUsed);
