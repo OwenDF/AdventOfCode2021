@@ -58,5 +58,3 @@ int GetCompletionScoreForCharacter(char character)
         '{' => 3,
         '<' => 4
     };
-4361305341
-
