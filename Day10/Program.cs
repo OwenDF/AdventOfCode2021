@@ -3,9 +3,11 @@ var characterRows = (await File.ReadAllLinesAsync("Input.txt")).Select(x => x.To
 var characters = new Dictionary<char, char> { { ')', '(' }, { ']', '[' }, { '}', '{' }, { '>', '<' } };
 
 var syntaxScore = 0;
+var completionScoreList = new List<long>();
 
 foreach (var row in characterRows)
 {
+    long completionScore = 0;
     var stack = new Stack<char>();
     foreach (var character in row)
     {
@@ -21,14 +23,25 @@ foreach (var row in characterRows)
             continue;
         }
 
-        syntaxScore += GetScoreForCharacter(character);
-        break;
+        syntaxScore += GetSyntaxScoreForCharacter(character);
+        goto nextRow;
     }
+    
+    if (stack.Any()) foreach (var remainingCharacter in stack)
+    {
+        completionScore *= 5;
+        completionScore += GetCompletionScoreForCharacter(remainingCharacter);
+    }
+
+    completionScoreList.Add(completionScore);
+    nextRow: ;
 }
 
 Console.WriteLine(syntaxScore);
+completionScoreList = completionScoreList.OrderBy(x => x).ToList();
+Console.WriteLine(completionScoreList[(completionScoreList.Count + 1) / 2 - 1]);
 
-int GetScoreForCharacter(char character)
+int GetSyntaxScoreForCharacter(char character)
     => character switch
     {
         ')' => 3,
@@ -36,3 +49,14 @@ int GetScoreForCharacter(char character)
         '}' => 1197,
         '>' => 25137
     };
+
+int GetCompletionScoreForCharacter(char character)
+    => character switch
+    {
+        '(' => 1,
+        '[' => 2,
+        '{' => 3,
+        '<' => 4
+    };
+4361305341
+
