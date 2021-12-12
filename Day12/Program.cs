@@ -8,27 +8,27 @@ var caves = new Dictionary<string, HashSet<string>>();
 
 foreach (var connection in connections)
 {
-    if (caves.ContainsKey(connection.First.Name))
+    if (caves.ContainsKey(connection.First))
     {
-        var set = caves[connection.First.Name];
-        set.Add(connection.Second.Name);
+        var set = caves[connection.First];
+        set.Add(connection.Second);
     }
-    else caves[connection.First.Name] = new HashSet<string> { connection.Second.Name };
+    else caves[connection.First] = new HashSet<string> { connection.Second };
     
-    if (caves.ContainsKey(connection.Second.Name))
+    if (caves.ContainsKey(connection.Second))
     {
-        var set = caves[connection.Second.Name];
-        set.Add(connection.First.Name);
+        var set = caves[connection.Second];
+        set.Add(connection.First);
     }
-    else caves[connection.Second.Name] = new HashSet<string> { connection.First.Name };
+    else caves[connection.Second] = new HashSet<string> { connection.First };
 
-    if (!caveType.ContainsKey(connection.First.Name))
-        caveType[connection.First.Name] = connection.First.Name.ToUpper() == connection.First.Name ?
+    if (!caveType.ContainsKey(connection.First))
+        caveType[connection.First] = connection.First.ToUpper() == connection.First ?
             CaveType.Large :
             CaveType.Small;
     
-    if (!caveType.ContainsKey(connection.Second.Name))
-        caveType[connection.Second.Name] = connection.Second.Name.ToUpper() == connection.Second.Name ?
+    if (!caveType.ContainsKey(connection.Second))
+        caveType[connection.Second] = connection.Second.ToUpper() == connection.Second ?
             CaveType.Large :
             CaveType.Small;
 }
@@ -58,17 +58,7 @@ int CalculateRoutes(string currentCave, HashSet<string> visitedSmallCaves, bool 
 
 Console.WriteLine(routes);
 
-Connection ToConnection(string[] arr)
-    => new(
-        arr[0].ToUpper() == arr[0] ? new BigCaveName(arr[0]) : new SmallCaveName(arr[0]),
-        arr[1].ToUpper() == arr[1] ? new BigCaveName(arr[1]) : new SmallCaveName(arr[1]));
-
-public interface ICaveName
-{
-    public string Name { get; }
-}
+Connection ToConnection(string[] arr) => new(arr[0], arr[1]);
 
 public enum CaveType { Undefined, Small, Large }
-public record BigCaveName(string Name) : ICaveName;
-public record SmallCaveName(string Name) : ICaveName;
-public record Connection(ICaveName First, ICaveName Second);
+public record Connection(string First, string Second);
