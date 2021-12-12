@@ -1,6 +1,4 @@
-﻿using Day12;
-
-var connections = (await File.ReadAllLinesAsync("Input.txt"))
+﻿var connections = (await File.ReadAllLinesAsync("Input.txt"))
     .Select(x => x.Split('-'))
     .Select(ToConnection)
     .ToList();
