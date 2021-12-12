@@ -35,17 +35,26 @@ foreach (var connection in connections)
             CaveType.Small;
 }
 
-var routes = CalculateRoutes("start", caves["start"], new HashSet<string>());
+var routes = CalculateRoutes("start", caves["start"], new HashSet<string>(), false);
 
-int CalculateRoutes(string currentCave, HashSet<string> routesFromCurrentCave, HashSet<string> visitedSmallCaves)
+int CalculateRoutes(string currentCave, HashSet<string> routesFromCurrentCave, HashSet<string> visitedSmallCaves,
+    bool doubleVisit)
 {
-    if (visitedSmallCaves.Contains(currentCave)) return 0;
+    if (visitedSmallCaves.Contains(currentCave))
+    {
+        if (!doubleVisit && currentCave != "start")
+        {
+            doubleVisit = true;
+        }
+        else return 0;
+    }
+
     if (currentCave == "end") return 1;
 
     var visited = new HashSet<string>(visitedSmallCaves);
     if (caveType[currentCave] == CaveType.Small) visited.Add(currentCave);
 
-    return routesFromCurrentCave.Sum(x => CalculateRoutes(x, caves[x], visited));
+    return routesFromCurrentCave.Sum(x => CalculateRoutes(x, caves[x], visited, doubleVisit));
 }
 
 Console.WriteLine(routes);
@@ -58,11 +67,6 @@ Connection ToConnection(string[] arr)
 public interface ICaveName
 {
     public string Name { get; }
-}
-
-public interface ICave : ICaveName
-{
-    public RecordSet<string> ConnectedCaves { get; }
 }
 
 public enum CaveType { Undefined, Small, Large }
