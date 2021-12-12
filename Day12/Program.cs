@@ -33,10 +33,9 @@ foreach (var connection in connections)
             CaveType.Small;
 }
 
-var routes = CalculateRoutes("start", caves["start"], new HashSet<string>(), false);
+var routes = CalculateRoutes("start", new HashSet<string>(), false);
 
-int CalculateRoutes(string currentCave, HashSet<string> routesFromCurrentCave, HashSet<string> visitedSmallCaves,
-    bool doubleVisit)
+int CalculateRoutes(string currentCave, HashSet<string> visitedSmallCaves, bool doubleVisit)
 {
     if (visitedSmallCaves.Contains(currentCave))
     {
@@ -49,10 +48,12 @@ int CalculateRoutes(string currentCave, HashSet<string> routesFromCurrentCave, H
 
     if (currentCave == "end") return 1;
 
-    var visited = new HashSet<string>(visitedSmallCaves);
-    if (caveType[currentCave] == CaveType.Small) visited.Add(currentCave);
+    if (caveType[currentCave] == CaveType.Small)
+    {
+        visitedSmallCaves = new HashSet<string>(visitedSmallCaves) { currentCave };
+    }
 
-    return routesFromCurrentCave.Sum(x => CalculateRoutes(x, caves[x], visited, doubleVisit));
+    return caves[currentCave].Sum(x => CalculateRoutes(x, visitedSmallCaves, doubleVisit));
 }
 
 Console.WriteLine(routes);
