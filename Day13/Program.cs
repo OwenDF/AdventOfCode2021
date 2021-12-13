@@ -14,18 +14,18 @@ var instructions = lines.Where(x => x.StartsWith("fold along"))
     .Select(x => x.Split("="))
     .Select(ParseOperation);
 
-foreach (var instruction in instructions)
+foreach (var (axis, value) in instructions)
 {
     var afterFold = new HashSet<Coordinate>();
     foreach (var coordinate in coordinates)
     {
-        switch (instruction.Axis)
+        switch (axis)
         {
-            case Axis.X when coordinate.X > instruction.Value:
-                afterFold.Add(coordinate with { X = instruction.Value - (coordinate.X - instruction.Value) });
+            case Axis.X when coordinate.X > value:
+                afterFold.Add(coordinate with { X = value - (coordinate.X - value) });
                 break;
-            case Axis.Y when coordinate.Y > instruction.Value:
-                afterFold.Add(coordinate with { Y = instruction.Value - (coordinate.Y - instruction.Value) });
+            case Axis.Y when coordinate.Y > value:
+                afterFold.Add(coordinate with { Y = value - (coordinate.Y - value) });
                 break;
             default:
                 afterFold.Add(coordinate);
