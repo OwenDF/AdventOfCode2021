@@ -16,4 +16,6 @@ var outerMostPacket = PacketParser.ReadPacketMessage(binarySequence);
 
 Console.WriteLine(outerMostPacket.SumVersionNumber());
 
+Console.WriteLine(outerMostPacket.Value);
+
 

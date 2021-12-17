@@ -2,15 +2,6 @@ using System.Text;
 
 namespace Day16;
 
-public interface Packet
-{
-    int Version { get; }
-}
-
-public record LiteralPacket(int Version, long Value) : Packet;
-
-public record OperatorPacket(int Version, Packet[] Subpackets) : Packet;
-
 public static class PacketParser
 {
     public static Packet ReadPacketMessage(string message) => ParsePacket(message.ToCharArray()).packet;
@@ -20,15 +11,23 @@ public static class PacketParser
         var version = Convert.ToInt32(new string(sequence.Slice(0, 3).Span), 2);
         var type = Convert.ToInt32(new string(sequence.Slice(3, 3).Span), 2);
 
-        switch (type)
+        if (type == 4)
         {
-            case 4:
-                var value = ParseValue(sequence.Slice(6));
-                return (new LiteralPacket(version, value.value), value.remaining);
-            default:
-                var subpackets = CreateOperatorSubpackets(sequence.Slice(6));
-                return (new OperatorPacket(version, subpackets.packets), subpackets.remaining);
+            var value = ParseValue(sequence.Slice(6));
+            return (new LiteralPacket(version, value.value), value.remaining);
         }
+
+        var subpackets = CreateOperatorSubpackets(sequence.Slice(6));
+        return (type switch
+        {
+            0 => new SumPacket(type, subpackets.packets),
+            1 => new ProductPacket(type, subpackets.packets),
+            2 => new MinimumPacket(type, subpackets.packets),
+            3 => new MaximumPacket(type, subpackets.packets),
+            5 => new GreaterThanPacket(type, subpackets.packets),
+            6 => new LessThanPacket(type, subpackets.packets),
+            7 => new EqualToPacket(type, subpackets.packets),
+        }, subpackets.remaining);
     }
 
     private static (long value, ReadOnlyMemory<char> remaining) ParseValue(ReadOnlyMemory<char> sequence)
