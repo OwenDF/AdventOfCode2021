@@ -8,6 +8,3 @@ foreach (var first in numbers) foreach (var second in numbers) if (first != seco
     max = Math.Max(max, first.Add(second).Magnitude());
 
 Console.WriteLine(max);
-
-
-
